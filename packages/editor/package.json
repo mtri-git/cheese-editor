@@ -1,0 +1,132 @@
+{
+  "name": "cheese-editor",
+  "version": "0.1.0",
+  "description": "Lightweight, extensible React rich text editor built on Tiptap v3",
+  "keywords": [
+    "cms",
+    "editor",
+    "markdown",
+    "notion-like",
+    "prosemirror",
+    "react",
+    "rich-text",
+    "slash-command",
+    "tiptap",
+    "wysiwyg"
+  ],
+  "homepage": "https://github.com/mtri-git/cheese-editor#readme",
+  "bugs": {
+    "url": "https://github.com/mtri-git/cheese-editor/issues"
+  },
+  "license": "MIT",
+  "author": "mtri-git (https://github.com/mtri-git)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mtri-git/cheese-editor.git",
+    "directory": "packages/editor"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./callout": {
+      "types": "./dist/callout.d.ts",
+      "import": "./dist/callout.js"
+    },
+    "./code-block": {
+      "types": "./dist/code-block.d.ts",
+      "import": "./dist/code-block.js"
+    },
+    "./details": {
+      "types": "./dist/details.d.ts",
+      "import": "./dist/details.js"
+    },
+    "./emoji": {
+      "types": "./dist/emoji.d.ts",
+      "import": "./dist/emoji.js"
+    },
+    "./image": {
+      "types": "./dist/image.d.ts",
+      "import": "./dist/image.js"
+    },
+    "./table": {
+      "types": "./dist/table.d.ts",
+      "import": "./dist/table.js"
+    },
+    "./video": {
+      "types": "./dist/video.d.ts",
+      "import": "./dist/video.js"
+    },
+    "./render": {
+      "types": "./dist/render.d.ts",
+      "import": "./dist/render.js"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./prose.css": "./dist/prose.css",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vp pack",
+    "dev": "vp pack --watch",
+    "test": "vp test",
+    "check": "vp check",
+    "prepack": "node -e \"const f=require('fs');f.copyFileSync('../../README.md','README.md');f.copyFileSync('../../LICENSE','LICENSE')\"",
+    "prepublishOnly": "vp pack"
+  },
+  "dependencies": {
+    "@floating-ui/dom": "^1.8.0",
+    "@tiptap/core": "^3.32.0",
+    "@tiptap/extension-code-block-lowlight": "^3.32.0",
+    "@tiptap/extension-details": "^3.32.0",
+    "@tiptap/extension-emoji": "^3.32.0",
+    "@tiptap/extension-highlight": "^3.32.0",
+    "@tiptap/extension-image": "^3.32.0",
+    "@tiptap/extension-list": "^3.32.0",
+    "@tiptap/extension-table": "^3.32.0",
+    "@tiptap/extension-text-align": "^3.32.0",
+    "@tiptap/extension-text-style": "^3.32.0",
+    "@tiptap/extensions": "^3.32.0",
+    "@tiptap/markdown": "^3.32.0",
+    "@tiptap/pm": "^3.32.0",
+    "@tiptap/react": "^3.32.0",
+    "@tiptap/starter-kit": "^3.32.0",
+    "@tiptap/suggestion": "^3.32.0",
+    "lucide-react": "^1.63.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.0",
+    "@tiptap/html": "^3.32.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "happy-dom": "^20.0.0",
+    "lowlight": "^3.3.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "typescript": "^7.0.2",
+    "vite-plus": "catalog:"
+  },
+  "peerDependencies": {
+    "lowlight": "^3.0.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "lowlight": {
+      "optional": true
+    }
+  }
+}

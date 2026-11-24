@@ -1,0 +1,160 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.app {
+  --app-bg: #f6f7f9;
+  --app-fg: #1f2328;
+  --app-panel: #ffffff;
+  --app-border: #e5e7eb;
+  min-height: 100vh;
+  background: var(--app-bg);
+  color: var(--app-fg);
+}
+.app.dark {
+  --app-bg: #010409;
+  --app-fg: #e6edf3;
+  --app-panel: #0d1117;
+  --app-border: #30363d;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--app-border);
+  background: var(--app-panel);
+}
+.app-header h1 {
+  font-size: 18px;
+  margin: 0;
+}
+.app-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.app-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 20px;
+  padding: 20px 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+@media (max-width: 960px) {
+  .app-main {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+}
+
+.app-side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.app-side section {
+  background: var(--app-panel);
+  border: 1px solid var(--app-border);
+  border-radius: 8px;
+  padding: 12px;
+}
+.app-side h2 {
+  font-size: 14px;
+  margin: 0 0 8px;
+}
+.app-side textarea {
+  width: 100%;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 13px;
+  padding: 8px;
+  border: 1px solid var(--app-border);
+  border-radius: 6px;
+  background: var(--app-bg);
+  color: inherit;
+}
+.app-row,
+.app-tabs {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.app-tabs {
+  margin: 0 0 8px;
+}
+.app-header button,
+.app-side button {
+  font: inherit;
+  font-size: 13px;
+  padding: 5px 10px;
+  border: 1px solid var(--app-border);
+  border-radius: 6px;
+  background: var(--app-panel);
+  color: inherit;
+  cursor: pointer;
+}
+.app-header button:disabled,
+.app-side button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.app-tabs button.is-active {
+  background: #4f46e5;
+  border-color: #4f46e5;
+  color: #fff;
+}
+.app-output {
+  margin: 0;
+  max-height: 460px;
+  overflow: auto;
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Custom ProductCard component */
+.product-card {
+  display: flex;
+  gap: 14px;
+  padding: 12px;
+  border: 1px solid var(--app-border);
+  border-radius: 10px;
+  background: var(--app-panel);
+  max-width: 460px;
+}
+.product-card.is-selected {
+  outline: 2px solid #4f46e5;
+}
+.product-card-vertical {
+  flex-direction: column;
+  max-width: 220px;
+}
+.product-card img {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.product-card-vertical img {
+  width: 100%;
+  height: auto;
+}
+.product-card-price {
+  color: #dc2626;
+  font-weight: 600;
+  margin: 4px 0 8px;
+}
+.product-card button {
+  border: 0 !important;
+  background: #4f46e5 !important;
+  color: #fff !important;
+}
