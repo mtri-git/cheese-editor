@@ -1,0 +1,89 @@
+name: Release
+
+# Publishes cheese-editor to npm when `version` in packages/editor/package.json is one that npm does
+# not have yet. Bump the version, push to main, and this runs. See RELEASING.md.
+#
+# It signs in to npm with trusted publishing (OIDC), so no npm token is stored in this repository.
+# One-time setup on npmjs.com: cheese-editor > Settings > Trusted Publisher > GitHub Actions,
+# owner `mtri-git`, repository `cheese-editor`, workflow filename `release.yml`.
+on:
+  push:
+    branches: [main]
+    paths:
+      - packages/editor/package.json
+  workflow_dispatch:
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write # tag and GitHub release
+  id-token: write # npm trusted publishing
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 9.15.4 # same as devEngines.packageManager in package.json
+          cache: true
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      # Trusted publishing needs npm 11.5.1 or newer.
+      - name: Update npm
+        run: npm install --global npm@^11.5.1
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # npm runs from the temp folder on purpose: inside the repo, devEngines makes every npm command
+      # fail with EBADDEVENGINES, which must not be mistaken for "not published yet".
+      - name: Is this version new?
+        id: version
+        working-directory: ${{ runner.temp }}
+        run: |
+          NAME=$(node -p "require('$GITHUB_WORKSPACE/packages/editor/package.json').name")
+          VERSION=$(node -p "require('$GITHUB_WORKSPACE/packages/editor/package.json').version")
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if OUT=$(npm view "$NAME@$VERSION" version 2>&1); then
+            echo "$NAME@$VERSION is already on npm. Nothing to publish."
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          elif echo "$OUT" | grep -q "E404"; then
+            echo "$NAME@$VERSION is new. Publishing."
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Could not ask npm about $NAME@$VERSION:"
+            echo "$OUT"
+            exit 1
+          fi
+
+      - name: Check, test and build
+        if: steps.version.outputs.publish == 'true'
+        run: pnpm run ready
+
+      # `pnpm pack` runs prepack (copies README and LICENSE) and writes the tarball npm will publish.
+      - name: Pack
+        if: steps.version.outputs.publish == 'true'
+        working-directory: packages/editor
+        run: pnpm pack --pack-destination "$RUNNER_TEMP/pack"
+
+      - name: Publish to npm
+        if: steps.version.outputs.publish == 'true'
+        working-directory: ${{ runner.temp }}/pack
+        run: npm publish "./${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}.tgz" --access public
+
+      - name: Tag and GitHub release
+        if: steps.version.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: gh release create "v$VERSION" --target "$GITHUB_SHA" --title "v$VERSION" --generate-notes
