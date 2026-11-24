@@ -1,5 +1,5 @@
 import { Check, ChevronDown } from "lucide-react";
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 import type { IconComponent } from "../core/types";
 import { ToolbarButton } from "./ToolbarButton";
@@ -34,6 +34,7 @@ export function Popover({
 }: PopoverProps) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const panelId = useId();
 
   useEffect(() => {
     if (!open) return;
@@ -58,7 +59,10 @@ export function Popover({
         title={title}
         active={active || open}
         disabled={disabled}
+        aria-haspopup="true"
         aria-expanded={open}
+        // Only point at the panel while it exists: a reference to a missing id is invalid.
+        aria-controls={open ? panelId : undefined}
         className={[label && "ce-btn-labeled", indicator !== undefined && "ce-btn-indicator"]
           .filter(Boolean)
           .join(" ")}
@@ -69,7 +73,9 @@ export function Popover({
         {caret && <ChevronDown size={14} className="ce-caret" />}
       </ToolbarButton>
       {open && (
-        <div className={`ce-popover-panel ce-align-${align}`}>{children(() => setOpen(false))}</div>
+        <div id={panelId} className={`ce-popover-panel ce-align-${align}`}>
+          {children(() => setOpen(false))}
+        </div>
       )}
     </div>
   );

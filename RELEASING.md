@@ -4,22 +4,25 @@ Publishing is automatic. When a push to `main` changes `version` in `packages/ed
 
 1. installs, then runs `pnpm run ready` (format and type check, tests, build);
 2. packs the package and publishes it to npm;
-3. creates the tag `vX.Y.Z` and a GitHub release with generated notes.
+3. creates the tag `vX.Y.Z` and a GitHub release whose notes are the `## X.Y.Z` section of `CHANGELOG.md`.
 
 A push that touches `package.json` without a new version (a dependency change, for example) does nothing: the workflow sees that the version is on npm and stops.
 
 ## Release a version
 
 ```sh
-# 1. Change `version` in packages/editor/package.json (0.1.0 -> 0.1.1, 0.2.0, 1.0.0...)
-# 2. Run the checks
+# 1. Change `version` in packages/editor/package.json (0.1.1 -> 0.1.2, 0.2.0, 1.0.0...)
+# 2. Add a "## 0.1.2" section at the top of CHANGELOG.md (what changed, in a few lines)
+# 3. Run the checks
 pnpm run ready
-# 3. Commit and push to main
-git commit -am "0.1.1: what changed"
+# 4. Commit and push to main
+git commit -am "0.1.2: what changed"
 git push
 ```
 
 Watch the run in the Actions tab. While `0.x`, a breaking change is a new minor version (0.2.0).
+
+The notes come from the heading `## 0.1.2` (`## [0.1.2] - 2026-12-01` works too) down to the next `## ` heading. If the section is missing the workflow warns and the release falls back to GitHub's generated notes, which list pull requests only and are close to empty when you push straight to `main`.
 
 ## One-time setup
 

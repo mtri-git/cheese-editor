@@ -1,24 +1,21 @@
 # cheese-editor
 
+[![npm](https://img.shields.io/npm/v/cheese-editor)](https://www.npmjs.com/package/cheese-editor) [![CI](https://github.com/mtri-git/cheese-editor/actions/workflows/ci.yml/badge.svg)](https://github.com/mtri-git/cheese-editor/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/cheese-editor)](https://github.com/mtri-git/cheese-editor/blob/main/LICENSE)
+
 Rich text editor nhẹ cho React, dựng trên **Tiptap v3**. Mỗi tính năng là một "feature" độc lập: tính năng nào không dùng thì không đưa vào, và thêm component React custom chỉ cần một lời gọi `createNodeFeature()`.
 
-Monorepo được quản lý hoàn toàn bằng [Vite+](https://viteplus.dev) (`vp`).
+**Demo:** https://mtri-git.github.io/cheese-editor/
 
+## Cài đặt
+
+```sh
+pnpm add cheese-editor react react-dom
+# hoặc: npm install cheese-editor react react-dom
 ```
-packages/editor     → thư viện `cheese-editor` (vp pack)
-apps/playground     → app demo, alias thẳng vào source để có HMR (vp dev)
-```
 
-## Lệnh
+Cần React 18 hoặc 19. Nếu dùng `cheese-editor/code-block` (tô màu code), cài thêm `lowlight`: `pnpm add lowlight`.
 
-| Việc                          | Lệnh                                    |
-| ----------------------------- | --------------------------------------- |
-| Cài dependencies              | `vp install`                            |
-| Chạy playground               | `vp run dev` (http://localhost:5173)    |
-| Build thư viện                | `vp run build`                          |
-| Test                          | `vp run test`                           |
-| Format, lint, type-check      | `vp check` (`vp check --fix` để tự sửa) |
-| Chạy tất cả trước khi release | `vp run ready`                          |
+Nhớ import CSS một lần ở nơi khởi động ứng dụng: `import "cheese-editor/styles.css"`.
 
 ## Dùng
 
@@ -132,3 +129,25 @@ Bảng được render không kèm độ rộng cột để co giãn theo màn h
 ## Theme
 
 Mọi màu sắc đều là CSS variable `--ce-*` (xem `packages/editor/src/styles.css`). Dark mode tự bật khi có class `.dark` hoặc `[data-theme="dark"]` ở phần tử cha.
+
+## Phát triển
+
+Monorepo được quản lý hoàn toàn bằng [Vite+](https://viteplus.dev) (`vp`).
+
+```
+packages/editor     → thư viện `cheese-editor` (vp pack)
+apps/playground     → app demo, alias thẳng vào source để có HMR (vp dev)
+```
+
+### Lệnh
+
+| Việc                          | Lệnh                                    |
+| ----------------------------- | --------------------------------------- |
+| Cài dependencies              | `vp install`                            |
+| Chạy playground               | `vp run dev` (http://localhost:5173)    |
+| Build thư viện                | `vp run build`                          |
+| Test                          | `vp run test`                           |
+| Format, lint, type-check      | `vp check` (`vp check --fix` để tự sửa) |
+| Chạy tất cả trước khi release | `vp run ready`                          |
+
+Phát hành phiên bản mới: xem [RELEASING.md](https://github.com/mtri-git/cheese-editor/blob/main/RELEASING.md). Lịch sử thay đổi: [CHANGELOG.md](https://github.com/mtri-git/cheese-editor/blob/main/CHANGELOG.md).

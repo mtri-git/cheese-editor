@@ -14,6 +14,8 @@ export interface ToolbarProps {
    * Default true.
    */
   insertMenu?: boolean;
+  /** Accessible name of the toolbar. Default "Formatting". */
+  label?: string;
 }
 
 function InsertMenu({ editor, items }: { editor: Editor; items: SlashItem[] }) {
@@ -41,7 +43,7 @@ function InsertMenu({ editor, items }: { editor: Editor; items: SlashItem[] }) {
 }
 
 /** Renders every toolbar item registered by the editor's features, grouped and separated. */
-export function Toolbar({ className, insertMenu = true }: ToolbarProps) {
+export function Toolbar({ className, insertMenu = true, label = "Formatting" }: ToolbarProps) {
   const { editor } = useCurrentEditor();
   // Re-render on every transaction so active / disabled states stay current.
   useEditorState({ editor, selector: (ctx) => ctx.transactionNumber });
@@ -66,7 +68,11 @@ export function Toolbar({ className, insertMenu = true }: ToolbarProps) {
   }
 
   return (
-    <div className={["ce-toolbar", className].filter(Boolean).join(" ")} role="toolbar">
+    <div
+      className={["ce-toolbar", className].filter(Boolean).join(" ")}
+      role="toolbar"
+      aria-label={label}
+    >
       {groups.map((group) => (
         <div key={group.name} className="ce-toolbar-group" data-group={group.name}>
           {group.items.map((item) => (

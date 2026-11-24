@@ -28,6 +28,8 @@ export function pickFiles(accept: string, multiple = false): Promise<File[]> {
     input.accept = accept;
     input.multiple = multiple;
     input.addEventListener("change", () => resolve(Array.from(input.files ?? [])));
+    // Closing the dialog without choosing fires `cancel`, not `change`: without this the promise never settles.
+    input.addEventListener("cancel", () => resolve([]));
     input.click();
   });
 }

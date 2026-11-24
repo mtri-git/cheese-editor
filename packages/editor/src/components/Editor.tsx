@@ -31,7 +31,11 @@ export interface EditorProps {
   className?: string;
   /** Rendered inside the editor context, below the content (status bar, word count...). */
   children?: ReactNode;
-  /** Passed through to Tiptap's `useEditor`. */
+  /** Accessible name of the editing area, read by screen readers. Read once on mount. Default "Rich text editor". */
+  label?: string;
+  /** Accessible name of the toolbar. Default "Formatting". */
+  toolbarLabel?: string;
+  /** Passed through to Tiptap's `useEditor`. Its `editorProps.attributes` are merged with the editor's own. */
   editorOptions?: Partial<UseEditorOptions>;
 }
 
@@ -51,6 +55,8 @@ export function Editor({
   blockHandle = true,
   className,
   children,
+  label = "Rich text editor",
+  toolbarLabel,
   editorOptions,
 }: EditorProps) {
   const callbacks = useRef({ onChange, onReady });
@@ -71,6 +77,12 @@ export function Editor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // The editing area gets a name and is announced as multiline. Attributes the caller passes in
+  // `editorOptions.editorProps.attributes` (an object or a function) are added to these and win.
+  const { editorProps: callerEditorProps, ...callerOptions } = editorOptions ?? {};
+  const callerAttributes = callerEditorProps?.attributes;
+  const ownAttributes = { "aria-label": label, "aria-multiline": "true" };
+
   const editor = useEditor(
     {
       extensions,
@@ -78,7 +90,14 @@ export function Editor({
       contentType,
       editable,
       onUpdate: ({ editor: updated }) => callbacks.current.onChange?.(updated),
-      ...editorOptions,
+      editorProps: {
+        ...callerEditorProps,
+        attributes:
+          typeof callerAttributes === "function"
+            ? (state) => ({ ...ownAttributes, ...callerAttributes(state) })
+            : { ...ownAttributes, ...callerAttributes },
+      },
+      ...callerOptions,
     },
     [],
   );
@@ -97,7 +116,7 @@ export function Editor({
   return (
     <EditorContext.Provider value={contextValue}>
       <div className={["ce-editor", className].filter(Boolean).join(" ")}>
-        {toolbar && editable && <Toolbar insertMenu={insertMenu} />}
+        {toolbar && editable && <Toolbar insertMenu={insertMenu} label={toolbarLabel} />}
         <EditorContent editor={editor} className="ce-content" />
         {bubbleMenu && <BubbleMenus />}
         {children}
