@@ -5,10 +5,15 @@ import { codeBlock } from "cheese-editor/code-block";
 import { details } from "cheese-editor/details";
 import { emoji } from "cheese-editor/emoji";
 import { image } from "cheese-editor/image";
+import { dataNode, renderContent } from "cheese-editor/render";
 import { table } from "cheese-editor/table";
 import { video } from "cheese-editor/video";
 
 import { productCard } from "./ProductCard";
+
+// What a page that only shows the content does: no React editor, no Tiptap, just this.
+// A node made with createNodeFeature is rendered as <div data-type="product-card" data-product-id="...">.
+const renderOptions = { nodes: { productCard: dataNode() } };
 
 // Module scope: features are read once when the editor mounts.
 const features = [
@@ -45,11 +50,11 @@ const features = [...basicKit(), image(), table(), productCard];
 <div data-type="product-card" data-product-id="sp-002" data-layout="horizontal"></div>
 `;
 
-type OutputTab = "markdown" | "html" | "json";
+type OutputTab = "preview" | "markdown" | "html" | "json";
 
 export function App() {
   const [editor, setEditor] = useState<TiptapEditor | null>(null);
-  const [tab, setTab] = useState<OutputTab>("markdown");
+  const [tab, setTab] = useState<OutputTab>("preview");
   const [, setVersion] = useState(0);
   const [dark, setDark] = useState(false);
   const [editable, setEditable] = useState(true);
@@ -61,7 +66,14 @@ export function App() {
       ? editor.getMarkdown()
       : tab === "html"
         ? editor.getHTML()
-        : JSON.stringify(editor.getJSON(), null, 2);
+        : tab === "json"
+          ? JSON.stringify(editor.getJSON(), null, 2)
+          : "";
+
+  // renderContent escapes text, limits URLs to safe schemes and skips unknown nodes, so its output is
+  // safe to insert as HTML. See "Hiển thị nội dung ở frontend" in the README.
+  const previewHtml =
+    editor && tab === "preview" ? renderContent(editor.getJSON(), renderOptions) : "";
 
   return (
     <div className={`app ${dark ? "dark" : ""}`}>
@@ -121,7 +133,7 @@ export function App() {
 
           <section>
             <div className="app-tabs">
-              {(["markdown", "html", "json"] as const).map((t) => (
+              {(["preview", "markdown", "html", "json"] as const).map((t) => (
                 <button
                   key={t}
                   type="button"
@@ -132,7 +144,14 @@ export function App() {
                 </button>
               ))}
             </div>
-            <pre className="app-output">{output}</pre>
+            {tab === "preview" ? (
+              <div
+                className="app-preview ce-prose"
+                dangerouslySetInnerHTML={{ __html: previewHtml }}
+              />
+            ) : (
+              <pre className="app-output">{output}</pre>
+            )}
           </section>
         </aside>
       </main>

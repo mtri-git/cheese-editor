@@ -121,6 +121,24 @@ body {
   word-break: break-word;
 }
 
+/* Output of cheese-editor/render, styled by cheese-editor/prose.css (class ce-prose) */
+.app-preview {
+  max-height: 460px;
+  overflow: auto;
+  font-size: 15px;
+}
+/* A page decides how to show a custom node: here a plain box built from its data-* attributes. */
+.app-preview [data-type="product-card"] {
+  padding: 10px 12px;
+  border: 1px dashed var(--app-border);
+  border-radius: 8px;
+}
+.app-preview [data-type="product-card"]::before {
+  content: "Product " attr(data-product-id) " (" attr(data-layout) ")";
+  color: var(--ce-muted);
+  font-size: 13px;
+}
+
 /* Custom ProductCard component */
 .product-card {
   display: flex;
