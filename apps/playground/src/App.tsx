@@ -4,6 +4,7 @@ import { callout } from "cheese-editor/callout";
 import { codeBlock } from "cheese-editor/code-block";
 import { details } from "cheese-editor/details";
 import { emoji } from "cheese-editor/emoji";
+import { htmlBlock } from "cheese-editor/html-block";
 import { image } from "cheese-editor/image";
 import { dataNode, renderContent } from "cheese-editor/render";
 import { table } from "cheese-editor/table";
@@ -13,7 +14,8 @@ import { productCard } from "./ProductCard";
 
 // What a page that only shows the content does: no React editor, no Tiptap, just this.
 // A node made with createNodeFeature is rendered as <div data-type="product-card" data-product-id="...">.
-const renderOptions = { nodes: { productCard: dataNode() } };
+// rawHtml: the playground shows your own HTML blocks. A site does this only for content it trusts.
+const renderOptions = { nodes: { productCard: dataNode() }, rawHtml: true };
 
 // Module scope: features are read once when the editor mounts.
 const features = [
@@ -24,6 +26,7 @@ const features = [
   callout(),
   details(),
   video(),
+  htmlBlock(),
   emoji(),
   productCard,
 ];

@@ -8,6 +8,7 @@ export default defineConfig({
       "code-block": "src/code-block.ts",
       details: "src/details.ts",
       emoji: "src/emoji.ts",
+      "html-block": "src/html-block.ts",
       image: "src/image.ts",
       table: "src/table.ts",
       video: "src/video.ts",

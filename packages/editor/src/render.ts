@@ -54,6 +54,13 @@ export interface RenderOptions {
    * See `createEmojiResolver` to build one from `gitHubEmojis`.
    */
   emoji?: (name: string) => string | null | undefined;
+  /**
+   * What to do with an HTML block (`cheese-editor/html-block`): `true` outputs it as it was written,
+   * a function outputs what it returns (a sanitizer, for example). Without it, an HTML block goes through
+   * `sanitize` when you pass one, and is left out otherwise: its HTML is not escaped, so a page shows it
+   * only when you trust the people who write the content.
+   */
+  rawHtml?: boolean | ((html: string) => string);
   /** Add `loading="lazy"` to images. Default `true`. */
   lazyImages?: boolean;
 }
@@ -228,6 +235,19 @@ function renderVideo(node: ContentNode): string {
     : "";
 }
 
+function renderHtmlBlock(node: ContentNode, options: RenderOptions): string {
+  const html = typeof node.attrs?.html === "string" ? node.attrs.html : "";
+  const output =
+    options.rawHtml === true
+      ? html
+      : typeof options.rawHtml === "function"
+        ? options.rawHtml(html)
+        : options.rawHtml === undefined && options.sanitize
+          ? options.sanitize(html)
+          : "";
+  return output ? `<div data-type="html-block">${output}</div>` : "";
+}
+
 function renderEmoji(node: ContentNode, options: RenderOptions): string {
   const name = node.attrs?.name;
   if (typeof name !== "string" || !/^[\w+-]{1,64}$/.test(name)) return "";
@@ -310,6 +330,8 @@ function renderNode(node: unknown, options: RenderOptions, depth: number): strin
       return renderVideo(node);
     case "emoji":
       return renderEmoji(node, options);
+    case "htmlBlock":
+      return renderHtmlBlock(node, options);
     default: {
       const tag = WRAPPERS[type];
       // An unknown node is not wrapped, but its content still shows.

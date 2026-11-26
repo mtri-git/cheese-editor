@@ -1,6 +1,6 @@
 {
   "name": "cheese-editor",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Lightweight, extensible React rich text editor built on Tiptap v3",
   "keywords": [
     "cms",
@@ -55,6 +55,10 @@
     "./emoji": {
       "types": "./dist/emoji.d.ts",
       "import": "./dist/emoji.js"
+    },
+    "./html-block": {
+      "types": "./dist/html-block.d.ts",
+      "import": "./dist/html-block.js"
     },
     "./image": {
       "types": "./dist/image.d.ts",

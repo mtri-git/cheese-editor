@@ -30,6 +30,7 @@ import {
   Underline,
   Undo2,
 } from "lucide-react";
+import { useState } from "react";
 
 import { MenuItem, Popover, UrlForm } from "../components/Popover";
 import { ToolbarButton } from "../components/ToolbarButton";
@@ -106,21 +107,48 @@ function toggleButton(
   };
 }
 
+/**
+ * The URL of the link and whether it opens a new tab. A link has no `target` and no `rel` unless it
+ * opens a new tab: no `nofollow`, which would tell search engines to ignore a site's own links.
+ */
+function LinkForm({ editor, close }: { editor: Editor; close: () => void }) {
+  const current = editor.getAttributes("link");
+  const [newTab, setNewTab] = useState(current.target === "_blank");
+  return (
+    <div className="ce-link-form">
+      <UrlForm
+        initial={current.href ?? ""}
+        submitLabel="Apply"
+        onSubmit={(href) => {
+          const chain = editor.chain().focus().extendMarkRange("link");
+          if (href) {
+            chain
+              .setLink({
+                href,
+                target: newTab ? "_blank" : null,
+                rel: newTab ? "noopener noreferrer" : null,
+              })
+              .run();
+          } else chain.unsetLink().run();
+          close();
+        }}
+      />
+      <label className="ce-checkbox">
+        <input
+          type="checkbox"
+          checked={newTab}
+          onChange={(event) => setNewTab(event.target.checked)}
+        />
+        Open in new tab
+      </label>
+    </div>
+  );
+}
+
 function LinkPopover({ editor }: { editor: Editor }) {
   return (
     <Popover icon={Link} title="Link" active={editor.isActive("link")}>
-      {(close) => (
-        <UrlForm
-          initial={editor.getAttributes("link").href ?? ""}
-          submitLabel="Apply"
-          onSubmit={(href) => {
-            const chain = editor.chain().focus().extendMarkRange("link");
-            if (href) chain.setLink({ href }).run();
-            else chain.unsetLink().run();
-            close();
-          }}
-        />
-      )}
+      {(close) => <LinkForm editor={editor} close={close} />}
     </Popover>
   );
 }
@@ -205,7 +233,15 @@ export function basicKit(options: BasicKitOptions = {}): EditorFeature[] {
     bulletList: on("lists") ? undefined : false,
     orderedList: on("lists") ? undefined : false,
     undoRedo: on("history") ? undefined : false,
-    link: on("link") ? { openOnClick: false, autolink: true, defaultProtocol: "https" } : false,
+    link: on("link")
+      ? {
+          openOnClick: false,
+          autolink: true,
+          defaultProtocol: "https",
+          // Tiptap's default is target="_blank" rel="noopener noreferrer nofollow" on every link.
+          HTMLAttributes: { target: null, rel: null },
+        }
+      : false,
   };
   features.push(defineFeature({ name: "starterKit", extensions: [StarterKit.configure(starter)] }));
 

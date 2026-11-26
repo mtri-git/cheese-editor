@@ -51,7 +51,10 @@ export function Page() {
 | `cheese-editor/callout`    | Khối ghi chú 5 màu, import/export theo cú pháp GitHub `> [!NOTE]`                                                                                                                                               |
 | `cheese-editor/details`    | Khối thu gọn (`<details>`)                                                                                                                                                                                      |
 | `cheese-editor/video`      | Nhúng YouTube / Vimeo / mp4                                                                                                                                                                                     |
+| `cheese-editor/html-block` | Khối HTML thô (widget nhúng, bảng có class…), giữ nguyên như đã viết. Xem mã nguồn và preview trong iframe sandbox (không chạy script)                                                                          |
 | `cheese-editor/emoji`      | Gõ `:smile` để gợi ý, kèm picker trên toolbar                                                                                                                                                                   |
+
+Link không có `target` và `rel` trừ khi bật "Open in new tab" trong popover link: khi đó là `target="_blank" rel="noopener noreferrer"`. Không có `nofollow`, để công cụ tìm kiếm vẫn theo link của chính trang web.
 
 Bỏ bớt tính năng trong basicKit: `basicKit({ color: false, taskList: false, heading: [1, 2] })`.
 
@@ -123,6 +126,10 @@ renderContent(doc, {
   emoji: createEmojiResolver(gitHubEmojis),
 });
 ```
+
+Khối HTML (`cheese-editor/html-block`) không được escape, nên mặc định bị bỏ qua khi render. Bật khi người viết nội dung là người bạn tin (`rawHtml: true`), hoặc truyền hàm làm sạch (`rawHtml: (html) => DOMPurify.sanitize(html)`). Có `sanitize` mà không có `rawHtml` thì khối HTML đi qua `sanitize`.
+
+Khi import HTML vào editor, viết khối HTML thô dưới dạng `<div data-type="html-block">…</div>`: editor giữ nguyên phần bên trong thay vì bỏ những thẻ nó không biết.
 
 Bảng được render không kèm độ rộng cột để co giãn theo màn hình, và `<details>` giữ trạng thái mở như lúc lưu. Code block ra `<code class="language-ts">`: tô màu bằng highlight.js hoặc Shiki phía bạn nếu cần.
 

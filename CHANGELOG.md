@@ -2,6 +2,19 @@
 
 Mỗi phiên bản có một mục `## X.Y.Z`. Khi phát hành, workflow `release` lấy đúng mục của phiên bản đó làm ghi chú cho GitHub release (xem `RELEASING.md`).
 
+## 0.2.0
+
+Gồm cả các thay đổi của 0.1.1 (bản đó chưa lên được npm).
+
+### Thay đổi
+
+- Link không còn mặc định `target="_blank" rel="noopener noreferrer nofollow"` (mặc định của Tiptap). Link mới không có `target` và `rel`, nên công cụ tìm kiếm theo được link nội bộ. Popover link có thêm ô "Open in new tab", bật lên thì link có `target="_blank" rel="noopener noreferrer"`. Nội dung đã lưu không bị sửa: link cũ vẫn giữ `nofollow` cho tới khi được sửa lại.
+
+### Thêm
+
+- `cheese-editor/html-block`: khối HTML thô, giữ nguyên như đã viết. Editor hiện mã nguồn và preview trong iframe sandbox không chạy script. `getHTML()` lưu nó trong thuộc tính `data-html`, nên không có gì của nó chạy trong editor. HTML được mở với `<div data-type="html-block">…</div>` cũng thành khối HTML, tiện khi import.
+- `cheese-editor/render`: tuỳ chọn `rawHtml` (`true` hoặc một hàm) để render khối HTML. Mặc định khối HTML bị bỏ qua, hoặc đi qua `sanitize` nếu có.
+
 ## 0.1.1
 
 ### Sửa
